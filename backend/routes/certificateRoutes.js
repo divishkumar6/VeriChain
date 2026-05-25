@@ -1,177 +1,216 @@
 const express = require("express");
-
 const router = express.Router();
 
 const crypto = require("crypto");
 
-const upload = require(
-    "../middleware/uploadMiddleware"
-);
+const upload = require("../middleware/uploadMiddleware");
 
-const Certificate = require(
-    "../models/Certificate"
-);
+const Certificate = require("../models/Certificate");
+
+const contract = require("../blockchain/contractService");
 
 
 
+// ==========================================
 // UPLOAD CERTIFICATE
+// ==========================================
 
 router.post(
-    "/upload-certificate",
+  "/upload-certificate",
 
-    upload.single("certificate"),
+  upload.single("certificate"),
 
-    async (req, res) => {
+  async (req, res) => {
+    try {
 
-        try {
+      // GENERATE HASH
 
-            // GENERATE SHA-256 HASH
-
-            const hash = crypto
-            .createHash("sha256")
-            .update(JSON.stringify(req.body))
-            .digest("hex");
-
+      const hash = crypto
+        .createHash("sha256")
+        .update(JSON.stringify(req.body))
+        .digest("hex");
 
 
-            // SAVE CERTIFICATE
 
-            const certificate =
-            await Certificate.create({
+      // GENERATE UNIQUE CERTIFICATE ID
 
-                studentName:
-                req.body.studentName,
+      const certId = Date.now().toString();
 
-                degree:
-                req.body.degree,
 
-                year:
-                req.body.year,
 
-                institutionName:
-                req.body.institutionName,
+      // STORE HASH ON BLOCKCHAIN
 
-                certificateHash: hash,
+      const tx = await contract.storeCertificate(
+        certId,
+        hash
+      );
 
-                fileUrl: req.file.path
-            });
+      await tx.wait();
 
-            res.status(201).json({
 
-                message:
-                "Certificate uploaded successfully",
 
-                certificate
-            });
+      // SAVE TO MONGODB
 
-        } catch (error) {
+      const certificate = await Certificate.create({
 
-            res.status(500).json({
-                error: error.message
-            });
-        }
+        certificateId: certId,
+
+        studentName: req.body.studentName,
+
+        degree: req.body.degree,
+
+        year: req.body.year,
+
+        institutionName: req.body.institutionName,
+
+        certificateHash: hash,
+
+        blockchainTx: tx.hash,
+
+        fileUrl: req.file.path
+      });
+
+
+
+      res.status(201).json({
+        message: "Certificate uploaded successfully",
+        certificate
+      });
+
+    } catch (error) {
+
+      console.log(error);
+
+      res.status(500).json({
+        error: error.message
+      });
     }
+  }
 );
 
 
 
+// ==========================================
 // GET ALL CERTIFICATES
+// ==========================================
 
 router.get(
-    "/certificates",
+  "/certificates",
 
-    async (req, res) => {
+  async (req, res) => {
+    try {
 
-        try {
+      const certificates =
+        await Certificate.find();
 
-            const certificates =
-            await Certificate.find();
+      res.json(certificates);
 
-            res.json(certificates);
+    } catch (error) {
 
-        } catch (error) {
-
-            res.status(500).json({
-                error: error.message
-            });
-        }
+      res.status(500).json({
+        error: error.message
+      });
     }
+  }
 );
 
 
 
+// ==========================================
 // GET SINGLE CERTIFICATE
+// ==========================================
 
 router.get(
-    "/certificate/:id",
+  "/certificate/:id",
 
-    async (req, res) => {
+  async (req, res) => {
+    try {
 
-        try {
+      const certificate =
+        await Certificate.findById(
+          req.params.id
+        );
 
-            const certificate =
-            await Certificate.findById(
-                req.params.id
-            );
+      res.json(certificate);
 
-            res.json(certificate);
+    } catch (error) {
 
-        } catch (error) {
-
-            res.status(500).json({
-                error: error.message
-            });
-        }
+      res.status(500).json({
+        error: error.message
+      });
     }
+  }
 );
 
 
 
+// ==========================================
 // VERIFY CERTIFICATE
+// ==========================================
 
 router.post(
-    "/verify-certificate",
+  "/verify-certificate",
 
-    async (req, res) => {
+  async (req, res) => {
 
-        try {
+    try {
 
-            res.json({
-                status: "VERIFIED"
-            });
+      const {
+        certId,
+        certHash
+      } = req.body;
 
-        } catch (error) {
 
-            res.status(500).json({
-                error: error.message
-            });
-        }
+
+      const verified =
+        await contract.verifyCertificate(
+          certId,
+          certHash
+        );
+
+
+
+      res.json({
+        status:
+          verified
+            ? "VERIFIED"
+            : "TAMPERED"
+      });
+
+    } catch (error) {
+
+      res.status(500).json({
+        error: error.message
+      });
     }
+  }
 );
 
 
 
+// ==========================================
 // STUDENT WALLET
+// ==========================================
 
 router.get(
-    "/student-wallet",
+  "/student-wallet",
 
-    async (req, res) => {
+  async (req, res) => {
 
-        try {
+    try {
 
-            const certificates =
-            await Certificate.find();
+      const certificates =
+        await Certificate.find();
 
-            res.json(certificates);
+      res.json(certificates);
 
-        } catch (error) {
+    } catch (error) {
 
-            res.status(500).json({
-                error: error.message
-            });
-        }
+      res.status(500).json({
+        error: error.message
+      });
     }
+  }
 );
 
 module.exports = router;
