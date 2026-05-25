@@ -2,6 +2,8 @@ const express = require("express");
 
 const router = express.Router();
 
+const crypto = require("crypto");
+
 const upload = require(
     "../middleware/uploadMiddleware"
 );
@@ -23,25 +25,39 @@ router.post(
 
         try {
 
+            // GENERATE SHA-256 HASH
+
+            const hash = crypto
+            .createHash("sha256")
+            .update(JSON.stringify(req.body))
+            .digest("hex");
+
+
+
+            // SAVE CERTIFICATE
+
             const certificate =
             await Certificate.create({
 
-                studentName: req.body.studentName,
+                studentName:
+                req.body.studentName,
 
-                degree: req.body.degree,
+                degree:
+                req.body.degree,
 
-                year: req.body.year,
+                year:
+                req.body.year,
 
                 institutionName:
                 req.body.institutionName,
 
-                certificateHash:
-                "temporaryHash",
+                certificateHash: hash,
 
                 fileUrl: req.file.path
             });
 
             res.status(201).json({
+
                 message:
                 "Certificate uploaded successfully",
 
