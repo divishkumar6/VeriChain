@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 
 import Navbar from "../components/Navbar";
@@ -11,7 +11,11 @@ import {
 } from "../services/certificateApi";
 
 function VerifyCertificate() {
-  const { certificateId } = useParams();
+  const { certificateId: routeCertificateId } = useParams();
+  const [searchParams] = useSearchParams();
+  const certificateId =
+    routeCertificateId ||
+    searchParams.get("certificateId");
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(Boolean(certificateId));
 

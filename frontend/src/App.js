@@ -2,6 +2,7 @@ import {
   BrowserRouter,
   Route,
   Routes,
+  useLocation,
 } from "react-router-dom";
 
 import Particles from "./components/Particles";
@@ -18,6 +19,19 @@ import { GlobalActivityProvider } from "./context/GlobalActivityContext";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./routes/ProtectedRoute";
 
+function HomeRoute() {
+  const location = useLocation();
+  const certificateId = new URLSearchParams(
+    location.search
+  ).get("certificateId");
+
+  if (certificateId) {
+    return <VerifyCertificate />;
+  }
+
+  return <LandingPage />;
+}
+
 function App() {
   return (
     <BrowserRouter>
@@ -28,7 +42,7 @@ function App() {
             <GlowBackground />
 
           <Routes>
-            <Route path="/" element={<LandingPage />} />
+            <Route path="/" element={<HomeRoute />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
             <Route

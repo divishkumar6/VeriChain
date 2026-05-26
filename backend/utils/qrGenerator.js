@@ -11,7 +11,7 @@ async function generateQRCode(
             "http://localhost:3000";
 
         const qrData =
-            `${frontendUrl.replace(/\/$/, "")}/verify/${certificateId}`;
+            `${frontendUrl.replace(/\/$/, "")}/?certificateId=${encodeURIComponent(certificateId)}`;
 
         const qrImage =
             await QRCode.toDataURL(qrData);
