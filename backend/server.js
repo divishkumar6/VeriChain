@@ -21,12 +21,26 @@ dotenv.config();
 
 const app = express();
 const uploadsDir = path.join(__dirname, "uploads");
+const allowedOrigins = (process.env.CORS_ORIGIN || "")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
 
 fs.mkdirSync(path.join(uploadsDir, "generated"), {
   recursive: true
 });
 
-app.use(cors());
+app.use(cors({
+  origin(origin, callback) {
+    if (!origin || allowedOrigins.length === 0 || allowedOrigins.includes(origin)) {
+      callback(null, true);
+      return;
+    }
+
+    callback(new Error("Not allowed by CORS"));
+  },
+  credentials: true
+}));
 app.use(express.json());
 app.use("/uploads", express.static(uploadsDir));
 
@@ -59,7 +73,17 @@ app.use(
 
 app.get('/', (req, res) => {
   res.json({
-    message: 'CODE-A-THON API is running'
+    message: 'VeriChain API is running'
+  });
+});
+
+app.get("/health", (req, res) => {
+  res.json({
+    status: "ok",
+    database:
+      mongoose.connection.readyState === 1
+        ? "connected"
+        : "disconnected"
   });
 });
 
@@ -114,10 +138,21 @@ mongoose.connect(process.env.MONGO_URI)
 
   const PORT = process.env.PORT || 5001;
 
-  app.listen(PORT, () => {
+  const server = app.listen(PORT, () => {
     console.log(
       `Server running on port ${PORT}`
     );
+  });
+
+  server.on("error", (error) => {
+    if (error.code === "EADDRINUSE") {
+      console.error(
+        `Port ${PORT} is already in use. Run npm run free-port, then npm run dev.`
+      );
+      process.exit(1);
+    }
+
+    throw error;
   });
 
 })

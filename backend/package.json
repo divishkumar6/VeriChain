@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "nodemon server.js"
+    "free-port": "lsof -ti tcp:${PORT:-5001} | xargs kill -9 2>/dev/null || true",
+    "dev": "npm run free-port && nodemon server.js"
   },
   "keywords": [],
   "author": "",

@@ -1,0 +1,131 @@
+<svg width="1400" height="820" viewBox="0 0 1400 820" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1400" height="820" fill="#050816"/>
+  <defs>
+    <linearGradient id="cyan" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#22d3ee"/>
+      <stop offset="1" stop-color="#a855f7"/>
+    </linearGradient>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <text x="700" y="54" text-anchor="middle" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="800">VERICHAIN ARCHITECTURE DIAGRAM</text>
+  <text x="700" y="88" text-anchor="middle" fill="#22d3ee" font-family="Arial, Helvetica, sans-serif" font-size="22">Blockchain-Based Academic Certificate Verification System</text>
+
+  <text x="52" y="148" fill="#22d3ee" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="800">USERS</text>
+  <rect x="132" y="110" width="1010" height="98" rx="10" stroke="#a855f7" fill="#07111f" opacity="0.88"/>
+  <g font-family="Arial, Helvetica, sans-serif" font-size="14" fill="#fff">
+    <text x="220" y="144" fill="#e879f9" font-size="16" font-weight="800">INSTITUTION</text>
+    <text x="220" y="170">Upload Template</text>
+    <text x="220" y="190">Issue Certificates</text>
+    <text x="420" y="144" fill="#4ade80" font-size="16" font-weight="800">STUDENT</text>
+    <text x="420" y="170">Upload Certificate</text>
+    <text x="420" y="190">Verify Authenticity</text>
+    <text x="625" y="144" fill="#38bdf8" font-size="16" font-weight="800">ADMIN</text>
+    <text x="625" y="170">Monitor System</text>
+    <text x="625" y="190">View Analytics</text>
+    <text x="850" y="144" fill="#e879f9" font-size="16" font-weight="800">EMPLOYER / PUBLIC</text>
+    <text x="850" y="170">Scan QR</text>
+    <text x="850" y="190">Verify Certificate</text>
+  </g>
+
+  <text x="28" y="280" fill="#22d3ee" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="800">FRONTEND</text>
+  <text x="42" y="304" fill="#22d3ee" font-family="Arial, Helvetica, sans-serif" font-size="16">(React)</text>
+  <rect x="120" y="240" width="1024" height="128" rx="10" stroke="#7c3aed" fill="#07111f" opacity="0.86"/>
+  <g font-family="Arial, Helvetica, sans-serif" font-size="14" fill="#fff">
+    <rect x="210" y="268" width="128" height="58" rx="8" stroke="#22d3ee" fill="#081424"/>
+    <text x="274" y="292" text-anchor="middle" font-weight="800">Landing Page</text>
+    <text x="274" y="314" text-anchor="middle">Project Info</text>
+    <rect x="360" y="268" width="128" height="58" rx="8" stroke="#a855f7" fill="#081424"/>
+    <text x="424" y="292" text-anchor="middle" font-weight="800">Auth System</text>
+    <text x="424" y="314" text-anchor="middle">Role Access</text>
+    <rect x="510" y="268" width="142" height="58" rx="8" stroke="#22c55e" fill="#081424"/>
+    <text x="581" y="292" text-anchor="middle" font-weight="800">Institution Portal</text>
+    <text x="581" y="314" text-anchor="middle">Issue Certificate</text>
+    <rect x="675" y="268" width="142" height="58" rx="8" stroke="#38bdf8" fill="#081424"/>
+    <text x="746" y="292" text-anchor="middle" font-weight="800">Student Portal</text>
+    <text x="746" y="314" text-anchor="middle">OCR + Blockchain</text>
+    <rect x="840" y="268" width="142" height="58" rx="8" stroke="#f59e0b" fill="#081424"/>
+    <text x="911" y="292" text-anchor="middle" font-weight="800">Admin Dashboard</text>
+    <text x="911" y="314" text-anchor="middle">Live Monitoring</text>
+    <rect x="1005" y="268" width="110" height="58" rx="8" stroke="#22d3ee" fill="#081424"/>
+    <text x="1060" y="292" text-anchor="middle" font-weight="800">QR Verify</text>
+    <text x="1060" y="314" text-anchor="middle">Public Page</text>
+  </g>
+
+  <rect x="185" y="405" width="895" height="58" rx="9" stroke="#94a3b8" fill="#070d1e"/>
+  <text x="585" y="430" fill="#fff" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="800">API GATEWAY</text>
+  <text x="585" y="454" fill="#cbd5e1" font-family="Arial, Helvetica, sans-serif" font-size="16">Express.js Server</text>
+
+  <text x="22" y="530" fill="#22d3ee" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="800">BACKEND</text>
+  <text x="26" y="554" fill="#22d3ee" font-family="Arial, Helvetica, sans-serif" font-size="16">SERVICES</text>
+  <g font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#fff">
+    <rect x="120" y="500" width="132" height="132" rx="10" stroke="#64748b" fill="#07111f"/>
+    <text x="186" y="545" text-anchor="middle" font-weight="800">AUTH SERVICE</text>
+    <text x="186" y="572" text-anchor="middle">JWT Authentication</text>
+    <text x="186" y="596" text-anchor="middle">Role Management</text>
+    <rect x="268" y="500" width="132" height="132" rx="10" stroke="#64748b" fill="#07111f"/>
+    <text x="334" y="545" text-anchor="middle" font-weight="800">TEMPLATE</text>
+    <text x="334" y="572" text-anchor="middle">Upload and Store</text>
+    <text x="334" y="596" text-anchor="middle">Fixed Format</text>
+    <rect x="416" y="500" width="150" height="132" rx="10" stroke="#64748b" fill="#07111f"/>
+    <text x="491" y="545" text-anchor="middle" font-weight="800">ISSUANCE</text>
+    <text x="491" y="572" text-anchor="middle">Generate ID</text>
+    <text x="491" y="596" text-anchor="middle">Render + QR</text>
+    <rect x="582" y="500" width="132" height="132" rx="10" stroke="#64748b" fill="#07111f"/>
+    <text x="648" y="545" text-anchor="middle" font-weight="800">HASH SERVICE</text>
+    <text x="648" y="572" text-anchor="middle">SHA256</text>
+    <text x="648" y="596" text-anchor="middle">Certificate Data</text>
+    <rect x="730" y="500" width="142" height="132" rx="10" stroke="#64748b" fill="#07111f"/>
+    <text x="801" y="545" text-anchor="middle" font-weight="800">BLOCKCHAIN</text>
+    <text x="801" y="572" text-anchor="middle">Store Hash</text>
+    <text x="801" y="596" text-anchor="middle">Return Tx Hash</text>
+    <rect x="888" y="500" width="132" height="132" rx="10" stroke="#64748b" fill="#07111f"/>
+    <text x="954" y="545" text-anchor="middle" font-weight="800">OCR SERVICE</text>
+    <text x="954" y="572" text-anchor="middle">Tesseract.js</text>
+    <text x="954" y="596" text-anchor="middle">Fixed Crop</text>
+    <rect x="1036" y="500" width="142" height="132" rx="10" stroke="#64748b" fill="#07111f"/>
+    <text x="1107" y="545" text-anchor="middle" font-weight="800">VERIFICATION</text>
+    <text x="1107" y="572" text-anchor="middle">Compare Hash</text>
+    <text x="1107" y="596" text-anchor="middle">Verified/Tampered</text>
+  </g>
+
+  <rect x="162" y="680" width="892" height="86" rx="10" stroke="#0284c7" stroke-dasharray="7 5" fill="#07111f" opacity="0.8"/>
+  <g font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#fff">
+    <text x="212" y="704" fill="#22d3ee" font-size="16" font-weight="800">DATA LAYER</text>
+    <rect x="210" y="718" width="170" height="36" rx="8" stroke="#22d3ee" fill="#081424"/>
+    <text x="295" y="742" text-anchor="middle">MongoDB</text>
+    <rect x="405" y="718" width="170" height="36" rx="8" stroke="#22d3ee" fill="#081424"/>
+    <text x="490" y="742" text-anchor="middle">File Storage</text>
+    <rect x="600" y="718" width="170" height="36" rx="8" stroke="#22d3ee" fill="#081424"/>
+    <text x="685" y="742" text-anchor="middle">Blockchain</text>
+    <rect x="795" y="718" width="170" height="36" rx="8" stroke="#22d3ee" fill="#081424"/>
+    <text x="880" y="742" text-anchor="middle">Events / Cache</text>
+  </g>
+
+  <rect x="1162" y="110" width="206" height="600" rx="10" stroke="#64748b" fill="#07111f" opacity="0.9"/>
+  <text x="1265" y="144" text-anchor="middle" fill="#22d3ee" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="800">REALTIME ACTIVITY FLOW</text>
+  <g font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#fff">
+    <text x="1206" y="184">Institution Login</text>
+    <text x="1206" y="232">Template Uploaded</text>
+    <text x="1206" y="280">Student Data Entered</text>
+    <text x="1206" y="328">Certificate Generated</text>
+    <text x="1206" y="376">SHA256 Hash Generated</text>
+    <text x="1206" y="424">Blockchain Transaction</text>
+    <text x="1206" y="472">QR Code Generated</text>
+    <text x="1206" y="520">Certificate Issued</text>
+    <line x1="1200" y1="196" x2="1200" y2="506" stroke="#94a3b8" stroke-width="2" stroke-dasharray="5 7"/>
+    <line x1="1180" y1="552" x2="1350" y2="552" stroke="#475569"/>
+    <text x="1206" y="592">OCR Extraction Started</text>
+    <text x="1206" y="640">Hash Comparison</text>
+    <text x="1206" y="688" fill="#4ade80">VERIFIED</text>
+    <text x="1278" y="688" fill="#ef4444">/ TAMPERED</text>
+  </g>
+
+  <rect x="18" y="780" width="1320" height="26" rx="8" fill="url(#cyan)" opacity="0.18" filter="url(#glow)"/>
+</svg>
