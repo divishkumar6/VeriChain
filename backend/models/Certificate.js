@@ -1,28 +1,49 @@
 const mongoose = require("mongoose");
 
-const certificateSchema = new mongoose.Schema({
+const certificateSchema = new mongoose.Schema(
+  {
+    certificateId: {
+      type: String
+    },
 
-    studentName: String,
+    studentName: {
+      type: String,
+      required: true
+    },
 
-    degree: String,
+    degree: {
+      type: String
+    },
 
-    year: String,
+    year: {
+      type: String
+    },
 
-    certificateId: String,
+    institutionName: {
+      type: String
+    },
 
-    institutionName: String,
+    certificateHash: {
+      type: String
+    },
 
-    certificateHash: String,
+    blockchainTx: {
+      type: String
+    },
 
-    qrCode: String,
+    qrCode: {
+      type: String
+    },
 
-    blockchainTx: String,
+    fileUrl: {
+      type: String
+    }
+  },
 
-    fileUrl: String
-
-}, { timestamps: true });
+  { timestamps: true }
+);
 
 module.exports = mongoose.model(
-    "Certificate",
-    certificateSchema
+  "Certificate",
+  certificateSchema
 );

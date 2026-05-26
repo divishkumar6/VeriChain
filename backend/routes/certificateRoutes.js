@@ -1,19 +1,25 @@
 const express = require("express");
-const router = express.Router();
 
 const crypto = require("crypto");
 
-const upload = require("../middleware/uploadMiddleware");
+const QRCode = require("qrcode");
 
-const Certificate = require("../models/Certificate");
+const router = express.Router();
 
-const contract = require("../blockchain/contractService");
+const upload =
+  require("../middleware/uploadMiddleware");
+
+const Certificate =
+  require("../models/Certificate");
+
+const contract =
+  require("../blockchain/contractService");
 
 
 
-// ==========================================
+// ==============================
 // UPLOAD CERTIFICATE
-// ==========================================
+// ==============================
 
 router.post(
   "/upload-certificate",
@@ -21,65 +27,85 @@ router.post(
   upload.single("certificate"),
 
   async (req, res) => {
+
     try {
 
-      // GENERATE HASH
+      // Generate SHA256 hash
+      const hash =
+        crypto
+          .createHash("sha256")
+          .update(req.file.filename)
+          .digest("hex");
 
-      const hash = crypto
-        .createHash("sha256")
-        .update(JSON.stringify(req.body))
-        .digest("hex");
+      // Unique certificate ID
+      const certId =
+        Date.now().toString();
 
-
-
-      // GENERATE UNIQUE CERTIFICATE ID
-
-      const certId = Date.now().toString();
-
-
-
-      // STORE HASH ON BLOCKCHAIN
-
-      const tx = await contract.storeCertificate(
-        certId,
-        hash
-      );
+      // Store on blockchain
+      const tx =
+        await contract.storeCertificate(
+          certId,
+          hash
+        );
 
       await tx.wait();
 
+      // QR verification URL
+      const verificationUrl =
+        `http://localhost:5001/api/certificate/verify/${certId}`;
 
+      // Generate QR Code
+      const qrCodeImage =
+        await QRCode.toDataURL(
+          verificationUrl
+        );
 
-      // SAVE TO MONGODB
+      // Save in MongoDB
+      const certificate =
+        await Certificate.create({
 
-      const certificate = await Certificate.create({
+          certificateId: certId,
+
+          studentName:
+            req.body.studentName,
+
+          degree:
+            req.body.degree,
+
+          year:
+            req.body.year,
+
+          institutionName:
+            req.body.institutionName,
+
+          certificateHash: hash,
+
+          blockchainTx: tx.hash,
+
+          qrCode: qrCodeImage,
+
+          fileUrl: req.file.path
+        });
+
+      res.status(201).json({
+
+        success: true,
+
+        message:
+          "Certificate uploaded successfully",
 
         certificateId: certId,
-
-        studentName: req.body.studentName,
-
-        degree: req.body.degree,
-
-        year: req.body.year,
-
-        institutionName: req.body.institutionName,
 
         certificateHash: hash,
 
         blockchainTx: tx.hash,
 
-        fileUrl: req.file.path
-      });
+        qrCode: qrCodeImage,
 
-
-
-      res.status(201).json({
-        message: "Certificate uploaded successfully",
         certificate
       });
 
     } catch (error) {
-
-      console.log(error);
 
       res.status(500).json({
         error: error.message
@@ -90,14 +116,15 @@ router.post(
 
 
 
-// ==========================================
+// ==============================
 // GET ALL CERTIFICATES
-// ==========================================
+// ==============================
 
 router.get(
   "/certificates",
 
   async (req, res) => {
+
     try {
 
       const certificates =
@@ -116,20 +143,29 @@ router.get(
 
 
 
-// ==========================================
+// ==============================
 // GET SINGLE CERTIFICATE
-// ==========================================
+// ==============================
 
 router.get(
   "/certificate/:id",
 
   async (req, res) => {
+
     try {
 
       const certificate =
         await Certificate.findById(
           req.params.id
         );
+
+      if (!certificate) {
+
+        return res.status(404).json({
+          message:
+            "Certificate not found"
+        });
+      }
 
       res.json(certificate);
 
@@ -144,9 +180,9 @@ router.get(
 
 
 
-// ==========================================
+// ==============================
 // VERIFY CERTIFICATE
-// ==========================================
+// ==============================
 
 router.post(
   "/verify-certificate",
@@ -160,17 +196,14 @@ router.post(
         certHash
       } = req.body;
 
-
-
       const verified =
         await contract.verifyCertificate(
           certId,
           certHash
         );
 
-
-
       res.json({
+
         status:
           verified
             ? "VERIFIED"
@@ -188,28 +221,92 @@ router.post(
 
 
 
-// ==========================================
-// STUDENT WALLET
-// ==========================================
+// ==============================
+// QR VERIFY ROUTE
+// ==============================
 
 router.get(
-  "/student-wallet",
-
+  "/verify/:certId",
   async (req, res) => {
 
     try {
 
-      const certificates =
-        await Certificate.find();
+      const { certId } = req.params;
 
-      res.json(certificates);
+      const certificate =
+        await Certificate.findOne({
+          certificateId: certId
+        });
+
+      if (!certificate) {
+
+        return res.send(`
+          <h1 style="color:red;">
+            Certificate Not Found
+          </h1>
+        `);
+
+      }
+
+      const isValid =
+        await contract.verifyCertificate(
+          certificate.certificateId,
+          certificate.certificateHash
+        );
+
+      if (isValid) {
+
+        return res.send(`
+          <div style="font-family:Arial;padding:40px;">
+            <h1 style="color:green;">
+              VERIFIED CERTIFICATE
+            </h1>
+
+            <h2>
+              ${certificate.studentName}
+            </h2>
+
+            <p>
+              Institution:
+              ${certificate.institutionName}
+            </p>
+
+            <p>
+              Certificate ID:
+              ${certificate.certificateId}
+            </p>
+          </div>
+        `);
+
+      } else {
+
+        return res.send(`
+          <div style="font-family:Arial;padding:40px;">
+            <h1 style="color:red;">
+              TAMPERED CERTIFICATE
+            </h1>
+
+            <p>
+              This certificate failed
+              blockchain verification.
+            </p>
+          </div>
+        `);
+
+      }
 
     } catch (error) {
 
-      res.status(500).json({
-        error: error.message
-      });
+      console.log(error);
+
+      res.send(`
+        <h1 style="color:red;">
+          Verification Failed
+        </h1>
+      `);
+
     }
+
   }
 );
 
