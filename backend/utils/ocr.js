@@ -1,45 +1,33 @@
-const Tesseract = require("tesseract.js");
-const sharp = require("sharp");
-const path = require("path");
+const Tesseract =
+require("tesseract.js");
 
 async function extractTextFromImage(
-    imagePath
+  imagePath
 ) {
 
-    try {
+  try {
 
-        const croppedImage =
-            path.join(
-                __dirname,
-                "cropped.png"
-            );
+    const result =
+    await Tesseract.recognize(
 
-        // Crop ONLY metadata section
-        await sharp(imagePath)
-            .extract({
-                left: 1200,
-                top: 1000,
-                width: 800,
-                height: 150
-            })
-            .grayscale()
-            .toFile(croppedImage);
+      imagePath,
 
-        const result =
-            await Tesseract.recognize(
-                croppedImage,
-                "eng"
-            );
+      "eng"
+    );
 
-        return result.data.text;
+    console.log(
+      result.data.text
+    );
 
-    } catch (error) {
+    return result.data.text;
 
-        console.log(error);
+  } catch (error) {
 
-        return null;
-    }
+    console.log(error);
+
+    return null;
+  }
 }
 
 module.exports =
-    extractTextFromImage;
+extractTextFromImage;

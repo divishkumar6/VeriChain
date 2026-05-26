@@ -37,7 +37,10 @@ const certificateSchema = new mongoose.Schema(
 
     fileUrl: {
       type: String
-    }
+    },
+    ocrData: {
+  type: Object
+}
   },
 
   { timestamps: true }
