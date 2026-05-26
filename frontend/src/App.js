@@ -1,66 +1,82 @@
-import Navbar
-  from "./components/Navbar";
+import {
+  BrowserRouter,
+  Route,
+  Routes,
+} from "react-router-dom";
 
-import Hero
-  from "./components/Hero";
-
-import GlowBackground
-  from "./components/GlowBackground";
-
-import Features
-  from "./components/Features";
-
-import Stats
-  from "./components/Stats";
-
-import Particles
-  from "./components/Particles";
-
-import UploadSection
-  from "./components/UploadSection";
-
-import VerifySection
-  from "./components/VerifySection";
-
-import LiveStats
-  from "./components/LiveStats";
-
-import ActivityPanel
-  from "./components/ActivityPanel";
+import Particles from "./components/Particles";
+import GlowBackground from "./components/GlowBackground";
+import LandingPage from "./pages/LandingPage";
+import LoginPage from "./pages/LoginPage";
+import SignupPage from "./pages/SignupPage";
+import InstitutionPortal from "./pages/InstitutionPortal";
+import StudentPortal from "./pages/StudentPortal";
+import AdminDashboard from "./pages/AdminDashboard";
+import UploadCertificate from "./pages/UploadCertificate";
+import VerifyCertificate from "./pages/VerifyCertificate";
+import { GlobalActivityProvider } from "./context/GlobalActivityContext";
+import { AuthProvider } from "./context/AuthContext";
+import ProtectedRoute from "./routes/ProtectedRoute";
 
 function App() {
-
   return (
+    <BrowserRouter>
+      <AuthProvider>
+        <GlobalActivityProvider>
+          <div className="relative min-h-screen overflow-hidden bg-primary text-white">
+            <Particles />
+            <GlowBackground />
 
-    <div className="
-      relative
-      min-h-screen
-      bg-primary
-      text-white
-      overflow-hidden
-    ">
-
-      <Particles />
-
-      <GlowBackground />
-
-      <Navbar />
-
-      <Hero />
-
-      <LiveStats />
-
-      <ActivityPanel />
-
-      <Stats />
-
-      <Features />
-
-      <UploadSection />
-
-      <VerifySection />
-
-    </div>
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/signup" element={<SignupPage />} />
+            <Route
+              path="/institution"
+              element={
+                <ProtectedRoute allowedRole="institution">
+                  <InstitutionPortal />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/student"
+              element={
+                <ProtectedRoute allowedRole="student">
+                  <StudentPortal />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute allowedRole="admin">
+                  <AdminDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/upload"
+              element={
+                <ProtectedRoute allowedRole="institution">
+                  <UploadCertificate />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/verify"
+              element={
+                <ProtectedRoute allowedRole="student">
+                  <VerifyCertificate />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/verify/:certificateId" element={<VerifyCertificate />} />
+          </Routes>
+          </div>
+        </GlobalActivityProvider>
+      </AuthProvider>
+    </BrowserRouter>
   );
 }
 

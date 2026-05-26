@@ -2,8 +2,16 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
+const fs = require('fs');
+const path = require('path');
+const bcrypt = require('bcryptjs');
 
 const authRoutes = require("./routes/authRoutes");
+const User = require("./models/User");
+const {
+  addEventListener,
+  getEvents
+} = require("./utils/activityEvents");
 
 const certificateRoutes = require(
   "./routes/certificateRoutes"
@@ -12,11 +20,37 @@ const certificateRoutes = require(
 dotenv.config();
 
 const app = express();
+const uploadsDir = path.join(__dirname, "uploads");
+
+fs.mkdirSync(path.join(uploadsDir, "generated"), {
+  recursive: true
+});
 
 app.use(cors());
 app.use(express.json());
+app.use("/uploads", express.static(uploadsDir));
 
 app.use("/api/auth", authRoutes);
+
+app.get("/api/events/history", (req, res) => {
+  res.json(getEvents());
+});
+
+app.get("/api/events/stream", (req, res) => {
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+  res.flushHeaders?.();
+
+  res.write(`event: snapshot\n`);
+  res.write(`data: ${JSON.stringify(getEvents())}\n\n`);
+
+  const unsubscribe = addEventListener((event) => {
+    res.write(`data: ${JSON.stringify(event)}\n\n`);
+  });
+
+  req.on("close", unsubscribe);
+});
 
 app.use(
   "/api/certificate",
@@ -29,10 +63,54 @@ app.get('/', (req, res) => {
   });
 });
 
+async function ensureDemoAdmin() {
+  const email =
+    process.env.DEMO_ADMIN_EMAIL ||
+    "admin@verichain.local";
+  const password =
+    process.env.DEMO_ADMIN_PASSWORD ||
+    "admin123";
+
+  const existingAdmin = await User.findOne({
+    email
+  });
+
+  if (existingAdmin) {
+    existingAdmin.name = existingAdmin.name || "VeriChain Admin";
+    existingAdmin.password = await bcrypt.hash(
+      password,
+      10
+    );
+    existingAdmin.role = "admin";
+    await existingAdmin.save();
+    return;
+  }
+
+  const hashedPassword = await bcrypt.hash(
+    password,
+    10
+  );
+
+  await User.create({
+    name: "VeriChain Admin",
+    email,
+    password: hashedPassword,
+    role: "admin"
+  });
+
+  console.log(
+    `Demo admin ready: ${email}`
+  );
+}
+
 mongoose.connect(process.env.MONGO_URI)
 .then(() => {
 
   console.log("MongoDB Connected");
+
+  ensureDemoAdmin().catch((err) => {
+    console.log(err);
+  });
 
   const PORT = process.env.PORT || 5001;
 

@@ -1,4 +1,4 @@
-const CryptoJS = require("crypto-js");
+const crypto = require("crypto");
 
 function generateHash(data) {
 
@@ -6,8 +6,10 @@ function generateHash(data) {
         JSON.stringify(data);
 
     const hash =
-        CryptoJS.SHA256(jsonData)
-        .toString();
+        crypto
+        .createHash("sha256")
+        .update(jsonData)
+        .digest("hex");
 
     return hash;
 }

@@ -25,6 +25,11 @@ function parseCertificateData(text) {
             /YEAR:\s*(.*)/i
         )?.[1]?.trim();
 
+    const degree =
+        text.match(
+            /DEGREE:\s*(.*)/i
+        )?.[1]?.trim();
+
     return {
 
         certificateId,
@@ -32,6 +37,8 @@ function parseCertificateData(text) {
         studentName,
 
         institutionName,
+
+        degree,
 
         year
     };
