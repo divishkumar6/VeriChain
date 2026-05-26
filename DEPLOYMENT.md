@@ -26,11 +26,13 @@ This repo includes `render.yaml`, so Render can create both services from one Bl
    - `PRIVATE_KEY`
    - `CONTRACT_ADDRESS`
    - `CORS_ORIGIN`
+   - `FRONTEND_URL`
 5. Add frontend environment variable:
    - `REACT_APP_API_URL`
 6. Deploy the backend first, then set:
    - `REACT_APP_API_URL=https://your-backend-service.onrender.com/api`
    - `CORS_ORIGIN=https://your-frontend-service.onrender.com`
+   - `FRONTEND_URL=https://your-frontend-service.onrender.com`
 7. Redeploy both services.
 
 ## Manual Render Settings

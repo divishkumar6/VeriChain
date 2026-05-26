@@ -81,6 +81,8 @@ JWT_SECRET=
 RPC_URL=
 PRIVATE_KEY=
 CONTRACT_ADDRESS=
+CORS_ORIGIN=http://localhost:3000
+FRONTEND_URL=http://localhost:3000
 DEMO_ADMIN_EMAIL=admin@verichain.local
 DEMO_ADMIN_PASSWORD=admin123
 ```

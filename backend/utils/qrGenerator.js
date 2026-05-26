@@ -6,8 +6,12 @@ async function generateQRCode(
 
     try {
 
+        const frontendUrl =
+            process.env.FRONTEND_URL ||
+            "http://localhost:3000";
+
         const qrData =
-            `http://localhost:3000/verify/${certificateId}`;
+            `${frontendUrl.replace(/\/$/, "")}/verify/${certificateId}`;
 
         const qrImage =
             await QRCode.toDataURL(qrData);
